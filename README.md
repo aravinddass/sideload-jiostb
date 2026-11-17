@@ -4,8 +4,9 @@ A beginner-friendly, clutter-free walkthrough to enable **network ADB debugging*
 
 > [!TIP]
 > **Need Hands-On Help or Want Vishal Beniwal to Do It For You?**
-> * **Mail-in Service:** If you find this guide too technical or complicated, you can ship your box to Vishal Beniwal and he will set it up for you! You can pay whatever your heart desires + return shipping.
-> * **Reddit:** Reach out directly to Vishal at [u/ilikechocopies](https://www.reddit.com/user/ilikechocopies)
+> * **Mail-In Service:** If you find this guide too technical or complicated, you can ship your box to Vishal Beniwal and he will set it up for you! Pay whatever your heart desires + return shipping.
+> * **Twitter / X:** [@ilikechocopies](https://x.com/ilikechocopies)
+> * **Reddit:** [u/ilikechocopies](https://www.reddit.com/user/ilikechocopies)
 > * **Instagram:** [@soloxsurfer](https://instagram.com/soloxsurfer)
 
 > [!NOTE]
@@ -13,29 +14,26 @@ A beginner-friendly, clutter-free walkthrough to enable **network ADB debugging*
 > * **JMSC200Av2** and **JMSB200A** across firmware builds `22.1.09`, `24.1.39`, `25.1.9`, and older.
 > * **JHS series (JHSC200 v1 / JioOS 2.0)** on firmware build `stb-jhcs200-11.3.46`.
 >
-> *Both box families use the exact same `./stage1.sh` workflow. The only minor difference is in **Step 8** (launching the proxy listener).*
+> *Both box families use the exact same `./stage1.sh` workflow. The only difference is in **Step 8** (launching the proxy listener).*
 
 > [!TIP]
 > **Don't Panic If Something Goes Wrong:**
-> * **Box acting up?** Simply factory reset your Jio STB to restore it back to default settings, then start over.
-> * **Wi-Fi not connecting properly?** Go into network settings, choose **Forget Network**, re-enter your password, and reconnect. Everything will work fine.
+> * **Box acting up?** Factory reset your Jio STB to restore default settings, then start over.
+> * **Wi-Fi not connecting properly?** Open network settings, choose **Forget Network**, re-enter your password, and reconnect.
 
 > [!IMPORTANT]
 > **Package Installer Limitation (Read This!):**
-> Jio disabled the stock Android package installer UI on the box. Because of this, you cannot simply click an APK file directly on the TV to install it. **Every time you want to install apps, you must install them via ADB** from your PC using:
+> Jio disabled the stock Android package installer UI on the box, so you cannot click an APK file directly on the TV to install it. **Every app must be installed via ADB** from your PC:
 >
 > ```bash
 > adb install "filename.apk"
 > ```
 
-> ❤️ **A quick note from Vishal Beniwal (Instagram @soloxsurfer / Reddit u/ilikechocopies):**  
-> If you prefer me to do it for you, you can ship the box over—pay whatever your heart desires + shipping. Otherwise, just keep me in your blessings for future success!
-
 ---
 
 ## ✨ What Happens After Running the Script?
 
-Once you execute Stage 1, the script performs several handy quality-of-life modifications on your Jio STB:
+Once you execute Stage 1, the script performs the following modifications on your Jio STB:
 
 * 🔓 **ADB Enabled:** Network ADB is activated (expires in 2037) so you can manage and sideload apps.
 * 🚀 **Monet Launcher Activated:** Replaces the cluttered stock interface with a clean, customizable TV launcher. The stock launcher is suspended to prevent boot ad reversion.
@@ -56,13 +54,13 @@ Once you execute Stage 1, the script performs several handy quality-of-life modi
   * [5. Run Docker](#step-5-run-docker)
   * [6. Setup Technitium DNS](#step-6-setup-technitium-dns)
   * [7. Deploy TLS Containers](#step-7-deploy-tls-containers)
-  * [8. Launch Proxy Listener (Model Specific)](#step-8-launch-proxy-listener)
+  * [8. Launch Proxy Listener](#step-8-launch-proxy-listener)
   * [9. Initialize Git Bash & Health Check](#step-9-initialize-git-bash--health-check)
   * [10. Execute Stage 1](#step-10-execute-stage-1)
   * [11. Verify ADB Connection](#step-11-verify-adb-connection)
   * [12. Teardown & Reset](#step-12-teardown--reset)
 * [How to Install Apps via ADB](#-how-to-install-apps-via-adb)
-* [Advanced CLI & JHS Options](#-advanced-cli-options)
+* [Advanced CLI Options](#-advanced-cli-options)
 * [Get Hands-On Help / Mail-In Setup](#-get-hands-on-help--mail-in-setup)
 * [Credits & Acknowledgments](#-credits--acknowledgments)
 
@@ -70,16 +68,16 @@ Once you execute Stage 1, the script performs several handy quality-of-life modi
 
 ## 🛠 Prerequisites
 
-Install these utilities on your Windows system before starting:
+Install these utilities on your Windows PC before starting:
 
-| Tool | Purpose | Download | 
-| ----- | ----- | ----- | 
-| **Docker Desktop** | Hosts local GenieACS backend services | [Official Download](https://docs.docker.com/desktop/setup/install/windows-install/) | 
-| **Python 3** | Runs proxy and diagnostic scripts (`Add to PATH` checked) | [python.org](https://www.python.org/downloads/) | 
-| **Technitium DNS** | Overrides local domain resolution | [technitium.com](https://technitium.com/dns/) | 
-| **Git for Windows** | Bash terminal environment | [gitforwindows.org](https://gitforwindows.org/) | 
+| Tool | Purpose | Download |
+| :--- | :--- | :--- |
+| **Docker Desktop** | Hosts local GenieACS backend services | [Official Download](https://docs.docker.com/desktop/setup/install/windows-install/) |
+| **Python 3** | Runs proxy and diagnostic scripts (`Add to PATH` checked) | [python.org](https://www.python.org/downloads/) |
+| **Technitium DNS** | Overrides local domain resolution | [technitium.com](https://technitium.com/dns/) |
+| **Git for Windows** | Bash terminal environment | [gitforwindows.org](https://gitforwindows.org/) |
 
-*(Note: Android platform-tools ADB binaries are already bundled inside this folder).*
+*(Note: Android platform-tools ADB binaries are already bundled inside this folder.)*
 
 ---
 
@@ -89,11 +87,11 @@ Install these utilities on your Windows system before starting:
 
 * Connect your Windows PC to your primary home Wi-Fi.
 * Connect your Jio STB to the same router (via standard Wi-Fi or Ethernet).
-* **Do not use Guest Wi-Fi** (guest networks isolate connected devices from talking to each other).
+* **Do not use Guest Wi-Fi** (guest networks isolate connected devices from communicating with each other).
 
 ### Step 2: Get Host IP
 
-Open Command Prompt (`Win + R` $\rightarrow$ `cmd`) and type:
+Open Command Prompt (`Win + R` $\rightarrow$ `cmd`) and run:
 
 ```cmd
 ipconfig
@@ -121,12 +119,11 @@ Find **Wireless LAN adapter Wi-Fi** (or Ethernet if wired) and copy your **IPv4 
 ### Step 4: Isolate Network & Temporarily Disable Windows Firewall
 
 1. **Unplug Incoming Internet:**
-   Unplug the **WAN / incoming fiber cable** from your router (keep the router powered on).
-   * Both devices must communicate over the local network without active internet access.
+   Unplug the **WAN / incoming fiber cable** from your router (keep the router powered on). Both devices must communicate over the local network without active internet access.
 
 2. **Temporarily Disable Windows Defender Firewall:**
    > [!IMPORTANT]
-   > Windows Firewall frequently blocks incoming connections from the STB on port **53** (DNS) and port **8443/9443** (TLS proxy), causing the exploit to silently fail. You must temporarily turn it off:
+   > Windows Firewall frequently blocks incoming connections from the STB on port **53** (DNS) and ports **8443/9443** (TLS proxy), causing the exploit to silently fail. Temporarily turn it off:
    >
    > 1. Press `Win + R`, type `firewall.cpl`, and press **Enter**.
    > 2. Click **"Turn Windows Defender Firewall on or off"** on the left menu.
@@ -135,7 +132,7 @@ Find **Wireless LAN adapter Wi-Fi** (or Ethernet if wired) and copy your **IPv4 
 
 ### Step 5: Run Docker
 
-Launch **Docker Desktop** from your Start Menu and wait until the engine status switches to running.
+Launch **Docker Desktop** from your Start Menu and wait until the engine status shows running.
 
 ### Step 6: Setup Technitium DNS
 
@@ -152,7 +149,7 @@ Launch **Docker Desktop** from your Start Menu and wait until the engine status 
 ### Step 7: Deploy TLS Containers
 
 1. Open File Explorer and navigate to `sideload-jiostb/tls`.
-2. Click the address bar, type `cmd`, and press Enter.
+2. Click the address bar, type `cmd`, and press **Enter**.
 3. In Command Prompt, run:
 
 ```cmd
@@ -161,7 +158,7 @@ docker compose up -d
 
 ### Step 8: Launch Proxy Listener
 
-Depending on your model, pick **Option A** or **Option B**:
+Pick **Option A** or **Option B** depending on your box model:
 
 #### Option A: For JMSC / JMSB Boxes (Default)
 
@@ -172,7 +169,7 @@ python -m pip install pycryptodome
 python pass_front.py
 ```
 
-*(Leave this window running. `pass_front.py` includes a precomputed token fallback, so it works even if pycryptodome is absent).*
+*(Leave this window running. `pass_front.py` includes a precomputed token fallback, so it works even without `pycryptodome`.)*
 
 #### Option B: For JHS Boxes (JHSC200 / JioOS 2.0)
 
@@ -184,18 +181,18 @@ JHS boxes enforce strict system CA certificate validation and reject the default
    ./jhs/run_acs.sh
    ```
 
-*(This automatically recovers the leaked eMudhra intermediate key, mints a certificate trusted by the STB's system store, and launches the proxy on ports 8443 and 9443. Leave this terminal open).*
+*(This recovers the leaked eMudhra intermediate key, mints a certificate trusted by the STB's system store, and launches the proxy on ports 8443 and 9443. Leave this terminal open.)*
 
 ### Step 9: Initialize Git Bash & Health Check
 
 1. Open the main `sideload-jiostb` folder.
 2. Right-click blank space $\rightarrow$ **Show more options** $\rightarrow$ **Open Git Bash here**.
-3. *(Optional but highly recommended)* Prove your PC setup works before touching the TV:
+3. *(Optional but recommended)* Verify your PC setup before touching the TV:
    ```bash
    python doctor.py --quick
    python doctor.py --simulate
    ```
-   `--simulate` sends a synthetic Inform through the proxy and GenieACS, verifying the entire chain is 100% operational.
+   `--simulate` sends a synthetic Inform through the proxy and GenieACS to confirm the entire chain is operational.
 
 ### Step 10: Execute Stage 1
 
@@ -205,7 +202,7 @@ Ensure Docker, Technitium, and your proxy listener (from Step 8) are active, the
 ./stage1.sh --list-devices
 ```
 
-Select your STB when prompted. To run only the required payload without stripping extras, you can alternatively use:
+Select your STB when prompted. To run only the required payload without stripping extra packages, use:
 
 ```bash
 ./stage1.sh --tasks-only
@@ -219,18 +216,13 @@ Select your STB when prompted. To run only the required payload without strippin
 > 2. Wait 5 seconds $\rightarrow$ Plug it back in.
 > 3. Allow it to boot up completely.
 
-> [!TIP]
-> **Stuck at any point during Steps 5 to 10?**
-> If you find the technical setup too cumbersome, **Vishal Beniwal** can do the entire process for you—just cover shipping + whatever you feel like paying. Reach out via Instagram at [**@soloxsurfer**](https://instagram.com/soloxsurfer) or Reddit at [**u/ilikechocopies**](https://www.reddit.com/user/ilikechocopies).
-
 ### Step 11: Verify ADB Connection
 
 > [!NOTE]
 > **"Allow USB Debugging?" Dialog on TV:**
-> No prompt will appear on your TV until the STB boots and applies the CWMP task. Once connected, your TV screen will display an RSA key prompt.
-> Check **"Always allow from this computer"** and select **OK**.
+> No prompt will appear on your TV until the STB boots and applies the CWMP task. Once connected, your TV screen will display an RSA key prompt. Check **"Always allow from this computer"** and select **OK**.
 >
-> If running `adb connect` initially shows `failed to authenticate` or `unauthorized`, that is completely normal before you click OK on the TV. Simply run `adb connect <STB_IP>:5555` again after approving.
+> If `adb connect` initially returns `failed to authenticate` or `unauthorized`, approve the prompt on the TV first and run `adb connect <STB_IP>:5555` again.
 
 In Git Bash, confirm your connection:
 
@@ -238,14 +230,14 @@ In Git Bash, confirm your connection:
 adb devices
 ```
 
-Your device should now be listed with the status **`device`**.
+Your device should now appear with the status **`device`**.
 
 ### Step 12: Teardown & Reset
 
 Once ADB is confirmed and your setup is complete:
 
-1. Stop `pass_front.py` / `run_acs.sh` by pressing `Ctrl + C` in its window (or run `./stage1.sh --stop`).
-2. In Git Bash, stop Docker containers:
+1. Stop `pass_front.py` or `run_acs.sh` by pressing `Ctrl + C` in its window (or run `./stage1.sh --stop`).
+2. In Git Bash, stop the Docker containers:
    ```bash
    docker compose down
    ```
@@ -262,7 +254,7 @@ Since the built-in package installer UI is disabled on the STB, install any Andr
    ```bash
    adb connect <STB_IP_ADDRESS>:5555
    ```
-2. Sideload your preferred application:
+2. Sideload your application:
    ```bash
    adb install "C:\path\to\your_app.apk"
    ```
@@ -273,7 +265,7 @@ Since the built-in package installer UI is disabled on the STB, install any Andr
 ## 🧰 Advanced CLI Options
 
 | Command | Purpose |
-|---|---|
+| :--- | :--- |
 | `./stage1.sh --doctor` | Run full diagnostic checklist of ports, NBI, and DNS |
 | `./stage1.sh --simulate` | Test synthetic CWMP session through TLS front & GenieACS |
 | `./stage1.sh --watch` | Real-time watcher polling for STB Inform and port 5555 |
@@ -293,15 +285,18 @@ Since the built-in package installer UI is disabled on the STB, install any Andr
 
 If you find this guide too complicated or don't have the time to configure Docker, DNS records, and TLS certificates, **Vishal Beniwal** can handle the entire setup for you:
 
-* **Mail-In Modification:** Send your box over, and Vishal will unlock network ADB, configure Monet Launcher, and set everything up.
+* **Mail-In Modification:** Ship your box over, and Vishal will unlock network ADB, configure Monet Launcher, and set everything up.
 * **Pricing:** Pay whatever your heart desires + return shipping charges.
-* **Contact:** Reach out to **Vishal Beniwal** on Instagram at [**@soloxsurfer**](https://instagram.com/soloxsurfer) or Reddit at [**u/ilikechocopies**](https://www.reddit.com/user/ilikechocopies).
+* **Contact Vishal Beniwal:**
+  * **Twitter / X:** [@ilikechocopies](https://x.com/ilikechocopies)
+  * **Instagram:** [@soloxsurfer](https://instagram.com/soloxsurfer)
+  * **Reddit:** [u/ilikechocopies](https://www.reddit.com/user/ilikechocopies)
 
 ---
 
 ## ⚠️ Important Disclaimers
 
-* **Scope:** Stage 1 performs modifications such as enabling ADB, queueing downgrade flags, installing Monet Launcher and Shevery (with full permissions), and deleting (or disabling if protected) TR-069, OTA update, command receiver, background scheduler, and ad service packages.
+* **Scope:** Stage 1 enables ADB, queues downgrade flags, installs Monet Launcher and Shevery (with full permissions), and deletes (or disables if protected) TR-069, OTA update, command receiver, background scheduler, and ad service packages.
 * **Root/Bootloader:** This guide deliberately excludes `unlock.sh` and `pull_boot.sh`. Do not run Stage 2 utilities unless you know what you are doing.
 * **Liability:** Use only on hardware you own or have explicit authorization to test.
 
@@ -310,11 +305,11 @@ If you find this guide too complicated or don't have the time to configure Docke
 ## 🌟 Credits & Acknowledgments
 
 * **Documentation, Windows 11 Streamlining & Maintenance:**  
-  Maintained by **Vishal Beniwal** (Instagram: [**@soloxsurfer**](https://instagram.com/soloxsurfer) / Reddit: [**u/ilikechocopies**](https://www.reddit.com/user/ilikechocopies))  
-  *The guide and any personal support are completely free. If you need Vishal to do the process for you, pay whatever your heart desires + shipping!*
+  Maintained by **Vishal Beniwal** — Twitter/X: [@ilikechocopies](https://x.com/ilikechocopies) | Instagram: [@soloxsurfer](https://instagram.com/soloxsurfer) | Reddit: [u/ilikechocopies](https://www.reddit.com/user/ilikechocopies)  
+  *The guide and personal support are completely free. If you'd like Vishal to handle the setup for you, pay whatever your heart desires + shipping—and keep him in your blessings!*
 
 * **Original Vulnerability Research & Tooling:**  
   Massive respect to **Bihaan Sen**, **ak_0o7**, and **Otus9051** for the reverse-engineering and original [Housekeeping-PoC](https://github.com/JFC-Group/Housekeeping-PoC/) repository. Please star and support their project!
 
 * **JHS Series & eMudhra Chain Research:**  
-  Huge thanks to **Pavit Chhabra** ([@mesosan16](https://twitter.com/mesosan16) on Twitter) for helping add JHS series support.
+  Huge thanks to **Pavit Chhabra** ([@mesosan16](https://x.com/mesosan16) on Twitter/X) for helping add JHS series support.
